@@ -2,20 +2,16 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
+      <% attributes.forEach(function(attribute) { %>
+        await queryInterface.addColumn('<%= tableName %>', '<%= attribute.fieldName %>', {
+          type: Sequelize.<%= attribute.dataFunction ? `${attribute.dataFunction.toUpperCase()}(Sequelize.${attribute.dataType.toUpperCase()})` : attribute.dataValues ? `${attribute.dataType.toUpperCase()}(${attribute.dataValues})` : attribute.dataType.toUpperCase() %>
+        }),
+      <% }) %>
   },
 
   down: async (queryInterface, Sequelize) => {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    <% attributes.forEach(function(attribute) { %>
+      await queryInterface.removeColumn('<%= tableName %>', '<%= attribute.fieldName %>')
+    <% }) %>
   }
 };

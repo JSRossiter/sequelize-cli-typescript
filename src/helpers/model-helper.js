@@ -15,6 +15,25 @@ function validateDataType(dataType) {
   return dataType;
 }
 
+function getJsType(dataType) {
+  switch (dataType) {
+    case 'string':
+    case 'decimal':
+    case 'text':
+      return 'string';
+    case 'integer':
+    case 'bigint':
+    case 'float':
+      return 'number';
+    case 'date':
+      return 'date';
+    case 'boolean':
+      return 'boolean';
+    default:
+      return dataType;
+  }
+}
+
 function formatAttributes(attribute) {
   let result;
   const split = attribute.split(':');
@@ -23,6 +42,7 @@ function formatAttributes(attribute) {
     result = {
       fieldName: split[0],
       dataType: split[1],
+      jsType: getJsType(split[1]),
       dataFunction: null,
       dataValues: null,
     };
@@ -108,7 +128,15 @@ module.exports = {
   },
 
   generateFileContent(args) {
-    return helpers.template.render('models/model.js', {
+    return helpers.template.render('models/model.ts', {
+      name: args.name,
+      attributes: this.transformAttributes(args.attributes),
+      underscored: args.underscored,
+    });
+  },
+
+  generateDeclarationFileContent(args) {
+    return helpers.template.render('models/model.d.ts', {
       name: args.name,
       attributes: this.transformAttributes(args.attributes),
       underscored: args.underscored,
@@ -121,7 +149,44 @@ module.exports = {
     helpers.asset.write(modelPath, this.generateFileContent(args));
   },
 
+  generateDeclarationFile(args) {
+    const declarationPath = helpers.path.getModelDeclarationPath(args.name);
+
+    helpers.asset.write(
+      declarationPath,
+      this.generateDeclarationFileContent(args)
+    );
+  },
+
   modelFileExists(filePath) {
     return helpers.path.existsSync(filePath);
+  },
+
+  addToIndexFile(args) {
+    const indexPath = helpers.path.getModelPath('index');
+    const importLine = helpers.asset.findLine(indexPath, 0, 'const env') - 1;
+    helpers.asset.insertLine(
+      indexPath,
+      importLine,
+      `import ${args.name}Factory from './${args.name}'`
+    );
+
+    const dbLine = helpers.asset.findLine(indexPath, 0, 'const db: DB');
+    const factoryLine = helpers.asset.findLine(indexPath, dbLine, '};');
+    helpers.asset.insertLine(
+      indexPath,
+      factoryLine,
+      `  ${args.name}: ${args.name}Factory(sequelize, DataTypes)`
+    );
+  },
+
+  addToIndexDeclarationFile(args) {
+    const indexPath = helpers.path.getModelDeclarationPath('index');
+    const lastLine = helpers.asset.findLine(indexPath, 0, '}');
+    helpers.asset.insertLine(
+      indexPath,
+      lastLine,
+      `  ${args.name}: import('../../models/${args.name}').${args.name}Static;`
+    );
   },
 };

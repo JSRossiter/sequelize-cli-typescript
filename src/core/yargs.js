@@ -1,6 +1,6 @@
 import fs from 'fs';
-import yargs from 'yargs';
 import path from 'path';
+import yargs from 'yargs';
 
 function loadRCFile(optionsPath) {
   const rcFile = optionsPath || path.resolve(process.cwd(), '.sequelizerc');
@@ -47,6 +47,11 @@ export function _baseOptions(yargs) {
     .option('models-path', {
       describe: 'The path to the models folder',
       default: 'models',
+      type: 'string',
+    })
+    .option('model-declarations-path', {
+      describe: 'The path to the model declarations folder',
+      default: 'types/models',
       type: 'string',
     })
     .option('url', {

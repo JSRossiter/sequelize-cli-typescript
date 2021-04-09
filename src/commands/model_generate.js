@@ -1,7 +1,6 @@
-import { _baseOptions, _underscoreOption } from '../core/yargs';
-
-import helpers from '../helpers';
 import clc from 'cli-color';
+import { _baseOptions, _underscoreOption } from '../core/yargs';
+import helpers from '../helpers';
 
 exports.builder = (yargs) =>
   _underscoreOption(
@@ -30,6 +29,9 @@ exports.handler = function (args) {
 
   try {
     helpers.model.generateFile(args);
+    helpers.model.generateDeclarationFile(args);
+    helpers.model.addToIndexFile(args);
+    helpers.model.addToIndexDeclarationFile(args);
   } catch (err) {
     helpers.view.error(err.message);
   }
@@ -38,6 +40,11 @@ exports.handler = function (args) {
   helpers.view.log(
     'New model was created at',
     clc.blueBright(helpers.path.getModelPath(args.name)),
+    '.'
+  );
+  helpers.view.log(
+    'New model declaration was created at',
+    clc.blueBright(helpers.path.getModelDeclarationPath(args.name)),
     '.'
   );
   helpers.view.log(

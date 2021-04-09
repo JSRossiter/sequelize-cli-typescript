@@ -1,8 +1,8 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import getYArgs from '../core/yargs';
 
 const resolve = require('resolve').sync;
-import getYArgs from '../core/yargs';
 
 const args = getYArgs().argv;
 
@@ -48,7 +48,12 @@ module.exports = {
   },
 
   addFileExtension(basename, options) {
-    return [basename, this.getFileExtension(options)].join('.');
+    return [
+      basename,
+      options && options.extension
+        ? options.extension
+        : this.getFileExtension(options),
+    ].join('.');
   },
 
   getMigrationPath(migrationName) {
@@ -69,10 +74,24 @@ module.exports = {
     return args.modelsPath || path.resolve(process.cwd(), 'models');
   },
 
+  getModelDeclarationsPath() {
+    return (
+      args.modelDeclarationsPath ||
+      path.resolve(process.cwd(), 'types', 'models')
+    );
+  },
+
   getModelPath(modelName) {
     return path.resolve(
       this.getModelsPath(),
-      this.addFileExtension(modelName.toLowerCase())
+      this.addFileExtension(modelName, { extension: 'ts' })
+    );
+  },
+
+  getModelDeclarationPath(modelName) {
+    return path.resolve(
+      this.getModelDeclarationsPath(),
+      this.addFileExtension(modelName, { extension: 'd.ts' })
     );
   },
 

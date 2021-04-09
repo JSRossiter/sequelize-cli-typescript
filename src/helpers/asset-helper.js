@@ -25,6 +25,22 @@ const assets = {
     this.inject(filePath, '__CONFIG_FILE__', configPath);
   },
 
+  findLine: (filePath, line, text) => {
+    const fileContent = fs.readFileSync(filePath).toString().split('\n');
+    for (let i = line + 1; i < fileContent.length; i++) {
+      const lineContent = fileContent[i];
+      if (lineContent.startsWith(text)) {
+        return i;
+      }
+    }
+  },
+
+  insertLine: (filePath, line, content) => {
+    const fileContent = fs.readFileSync(filePath).toString().split('\n');
+    fileContent.splice(line, 0, content);
+    fs.writeFileSync(filePath, fileContent.join('\n'));
+  },
+
   mkdirp: (pathToCreate) => {
     fs.mkdirpSync(pathToCreate);
   },
