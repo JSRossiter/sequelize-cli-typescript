@@ -16,7 +16,7 @@ const factory = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
-    static associate (models) {
+    static associate (models: DB) {
       // define association here
     }
   };
@@ -28,16 +28,16 @@ const factory = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
       primaryKey: true,
     },
     <% attributes.forEach(function(attribute, index) { %>
-      <%= attribute.fieldName %>: DataTypes.<%= attribute.dataFunction ? `${attribute.dataFunction.toUpperCase()}(DataTypes.${attribute.dataType.toUpperCase()})` : attribute.dataValues ? `${attribute.dataType.toUpperCase()}(${attribute.dataValues})` : attribute.dataType.toUpperCase() %>
-      <%= (Object.keys(attributes).length - 1) > index ? ',' : '' %>
+      <%= attribute.fieldName %>: DataTypes.<%= attribute.dataFunction ? `${attribute.dataFunction.toUpperCase()}(DataTypes.${attribute.dataType.toUpperCase()})` : attribute.dataValues ? `${attribute.dataType.toUpperCase()}(${attribute.dataValues})` : attribute.dataType.toUpperCase() %>,
     <% }) %>
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
   }, {
     sequelize,
     modelName: '<%= name %>',
     <%= underscored ? 'underscored: true,' : '' %>
   });
 
-  // @ts-no-check
   return <%= name %>;
 };
 

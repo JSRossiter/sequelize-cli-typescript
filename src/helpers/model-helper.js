@@ -26,7 +26,7 @@ function getJsType(dataType) {
     case 'float':
       return 'number';
     case 'date':
-      return 'date';
+      return 'Date';
     case 'boolean':
       return 'boolean';
     default:
@@ -176,7 +176,7 @@ module.exports = {
     helpers.asset.insertLine(
       indexPath,
       factoryLine,
-      `  ${args.name}: ${args.name}Factory(sequelize, DataTypes)`
+      `  ${args.name}: ${args.name}Factory(sequelize, DataTypes),`
     );
   },
 
