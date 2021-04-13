@@ -30,7 +30,9 @@ exports.handler = function (args) {
   }
   helpers.init.createMigrationsFolder();
 
-  const attributes = helpers.model.transformAttributes(args.attributes);
+  const attributes = args.attributes
+    ? helpers.model.transformAttributes(args.attributes)
+    : [];
   fs.writeFileSync(
     helpers.path.getMigrationPath(args.name),
     helpers.template.render(
@@ -51,7 +53,12 @@ exports.handler = function (args) {
       helpers.asset.findLine(modelPath, 0, '    public readonly createdAt') - 1;
     const typeLines = attributes
       .map(
-        (attribute) => `    public ${attribute.fieldName}: ${attribute.jsType};`
+        (attribute) =>
+          `    public ${attribute.fieldName}: ${
+            attribute.dataValues
+              ? attribute.dataValues.split(', ').join(' | ')
+              : attribute.jsType
+          };`
       )
       .join('\n');
     helpers.asset.insertLine(modelPath, typeLine, typeLines);
@@ -79,7 +86,14 @@ exports.handler = function (args) {
       '}'
     );
     const declarationLines = attributes
-      .map((attribute) => `  ${attribute.fieldName}: ${attribute.jsType};`)
+      .map(
+        (attribute) =>
+          `  ${attribute.fieldName}: ${
+            attribute.dataValues
+              ? attribute.dataValues.split(', ').join(' | ')
+              : attribute.jsType
+          };`
+      )
       .join('\n');
     helpers.asset.insertLine(
       modelDeclarationPath,

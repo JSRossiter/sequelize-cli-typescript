@@ -10,7 +10,7 @@ const factory = (sequelize: Sequelize, DataTypes: typeof DataTypesType) => {
     public readonly id!: number;
 
     <% attributes.forEach(function(attribute, index) { %>
-      <%= attribute.fieldName %>: <%= attribute.dataFunction ? `${attribute.dataFunction.toUpperCase()}(DataTypes.${attribute.dataType.toUpperCase()})` : attribute.dataValues ? `${attribute.dataType.toUpperCase()}(${attribute.dataValues})` : attribute.jsType %>;
+      <%= attribute.fieldName %>: <%= attribute.dataFunction ? `${attribute.dataFunction.toUpperCase()}(DataTypes.${attribute.dataType.toUpperCase()})` : attribute.dataValues ? attribute.dataValues.split(', ').join(' | ') : attribute.jsType %>;
     <% }) %>
 
     public readonly createdAt!: Date;
