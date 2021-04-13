@@ -11,5 +11,7 @@ interface <%= name %>Attributes {
 
 type <%= name %>CreationAttributes = import('sequelize/types').Optional<
   <%= name %>Attributes,
-  'id'
+  'id',
+  'createdAt',
+  'updatedAt'
 >;
