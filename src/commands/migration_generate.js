@@ -54,7 +54,7 @@ exports.handler = function (args) {
     const typeLines = attributes
       .map(
         (attribute) =>
-          `    public ${attribute.fieldName}: ${
+          `    public ${attribute.fieldName}!: ${
             attribute.dataValues
               ? attribute.dataValues.split(', ').join(' | ')
               : attribute.jsType
@@ -66,7 +66,7 @@ exports.handler = function (args) {
     const initLines = attributes
       .map(
         (attribute) =>
-          `      ${attribute.fieldName}: DataTypes.${
+          `      public ${attribute.fieldName}!: DataTypes.${
             attribute.dataFunction
               ? `${attribute.dataFunction.toUpperCase()}(Sequelize.${attribute.dataType.toUpperCase()})`
               : attribute.dataValues
