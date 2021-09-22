@@ -38,7 +38,7 @@ exports.handler = function (args) {
     helpers.template.render(
       'migrations/skeleton.js',
       {
-        tableName: helpers.migration.getTableName(args.model),
+        tableName: args.model && helpers.migration.getTableName(args.model),
         attributes: attributes,
       },
       {
