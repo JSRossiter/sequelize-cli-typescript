@@ -49,8 +49,11 @@ exports.handler = function (args) {
 
   if (args.model) {
     const modelPath = helpers.path.getModelPath(args.model);
-    const typeLine =
-      helpers.asset.findLine(modelPath, 0, '    public readonly createdAt') - 1;
+    const typeLine = helpers.asset.findLine(
+      modelPath,
+      0,
+      '    public readonly createdAt'
+    );
     const typeLines = attributes
       .map(
         (attribute) =>
@@ -66,7 +69,7 @@ exports.handler = function (args) {
     const initLines = attributes
       .map(
         (attribute) =>
-          `      public ${attribute.fieldName}!: DataTypes.${
+          `      ${attribute.fieldName}: DataTypes.${
             attribute.dataFunction
               ? `${attribute.dataFunction.toUpperCase()}(Sequelize.${attribute.dataType.toUpperCase()})`
               : attribute.dataValues
